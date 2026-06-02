@@ -1,0 +1,29 @@
+# OSX
+.DS_Store
+
+# Xcode
+build/
+*.pbxuser
+xcuserdata
+DerivedData
+*.xcuserstate
+project.xcworkspace
+
+# Android/IntelliJ
+build/
+.idea
+.gradle
+local.properties
+*.iml
+
+# node.js
+node_modules/
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+
+# CocoaPods
+/example/ios/Pods/
+
+# NOTE: lib/ (bob output) is intentionally committed so git-URL consumers
+# get the built package without running a build step.

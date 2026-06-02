@@ -1,0 +1,1 @@
+{"version":3,"names":["TelecomAF","TelecomAFError","toTelecomAFError","isRecoverableAccountError"],"sourceRoot":"../../src","sources":["index.ts"],"mappings":";;AAAA,SAAQA,SAAS,QAAO,oBAAoB;AAC5C,SAAQC,cAAc,EAAEC,gBAAgB,EAAEC,yBAAyB,QAAO,UAAU","ignoreList":[]}

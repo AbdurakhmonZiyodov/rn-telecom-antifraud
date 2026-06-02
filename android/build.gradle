@@ -1,0 +1,79 @@
+buildscript {
+    ext.safeExtGet = { prop, fallback ->
+        rootProject.ext.has(prop) ? rootProject.ext.get(prop) : fallback
+    }
+
+    repositories {
+        google()
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath("com.android.tools.build:gradle:8.9.1")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${safeExtGet('kotlinVersion', '2.1.20')}")
+    }
+}
+
+apply plugin: "com.android.library"
+apply plugin: "org.jetbrains.kotlin.android"
+
+// The Telecom AntiFraud SDK is hosted on an AUTHENTICATED GitLab Maven registry.
+// Consumers must provide two values (gradle.properties, ~/.gradle/gradle.properties or -P flags):
+//   TelecomAfGitlabProjectId = <numeric GitLab project id of the SDK repo>
+//   TelecomAfGitlabToken     = <GitLab Private-Token with read_package_registry scope>
+// See README "Android setup".
+def telecomAfProjectId = project.findProperty("TelecomAfGitlabProjectId") ?: ""
+def telecomAfToken = project.findProperty("TelecomAfGitlabToken") ?: "NO_TOKEN"
+def telecomAfMavenUrl = "https://git.rtmc.uz/api/v4/projects/${telecomAfProjectId}/packages/maven"
+
+android {
+    namespace "com.rntelecomantifraud"
+
+    compileSdk safeExtGet("compileSdkVersion", 36)
+
+    defaultConfig {
+        minSdk safeExtGet("minSdkVersion", 24)
+        targetSdk safeExtGet("targetSdkVersion", 35)
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    kotlinOptions {
+        jvmTarget = "17"
+    }
+}
+
+repositories {
+    google()
+    mavenCentral()
+}
+
+// Inject the authenticated Telecom AF registry into the consumer's root project so
+// :app can resolve the transitive `uz.tbm.antifraud:*` dependency without each consumer
+// adding the repo themselves. Scoped via includeGroup so it is only queried for AF artifacts.
+rootProject.allprojects {
+    repositories {
+        maven {
+            name = "TelecomAntiFraudGitLab"
+            url = uri(telecomAfMavenUrl)
+            credentials(HttpHeaderCredentials) {
+                name = "Private-Token"
+                value = telecomAfToken
+            }
+            authentication {
+                header(HttpHeaderAuthentication)
+            }
+            content {
+                includeGroup "uz.tbm.antifraud"
+            }
+        }
+    }
+}
+
+dependencies {
+    implementation "com.facebook.react:react-android"
+    implementation "uz.tbm.antifraud:sdk:1.1.6"
+}
