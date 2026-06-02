@@ -17,13 +17,20 @@ buildscript {
 apply plugin: "com.android.library"
 apply plugin: "org.jetbrains.kotlin.android"
 
-// The Telecom AntiFraud SDK is hosted on an AUTHENTICATED GitLab Maven registry.
-// Consumers must provide two values (gradle.properties, ~/.gradle/gradle.properties or -P flags):
-//   TelecomAfGitlabProjectId = <numeric GitLab project id of the SDK repo>
-//   TelecomAfGitlabToken     = <GitLab Private-Token with read_package_registry scope>
-// See README "Android setup".
-def telecomAfProjectId = project.findProperty("TelecomAfGitlabProjectId") ?: ""
-def telecomAfToken = project.findProperty("TelecomAfGitlabToken") ?: "NO_TOKEN"
+// --- Telecom AntiFraud SDK registry (authenticated) ---
+// The SDK (uz.tbm.antifraud) is NOT on Maven Central — it lives on the operator's private
+// GitLab package registry (git.rtmc.uz, project id 3), so Gradle needs a Private-Token to
+// download it. We reuse the token the app already stores in android/local.properties as
+// `gpr.key` (the same key existing projects use) — so consumers add nothing new.
+// projectId defaults to 3 (the operator's AF SDK project); override with -PTelecomAfProjectId.
+def telecomAfToken = project.findProperty("gpr.key") ?: "NO_TOKEN"
+def localPropsFile = rootProject.file("local.properties")
+if (localPropsFile.exists()) {
+    def localProps = new Properties()
+    localProps.load(new FileInputStream(localPropsFile))
+    telecomAfToken = localProps.getProperty("gpr.key") ?: telecomAfToken
+}
+def telecomAfProjectId = project.findProperty("TelecomAfProjectId") ?: "3"
 def telecomAfMavenUrl = "https://git.rtmc.uz/api/v4/projects/${telecomAfProjectId}/packages/maven"
 
 android {
@@ -51,9 +58,9 @@ repositories {
     mavenCentral()
 }
 
-// Inject the authenticated Telecom AF registry into the consumer's root project so
-// :app can resolve the transitive `uz.tbm.antifraud:*` dependency without each consumer
-// adding the repo themselves. Scoped via includeGroup so it is only queried for AF artifacts.
+// Inject the authenticated Telecom AF registry into the consumer's root project so every
+// module (including this one) can resolve `uz.tbm.antifraud:*`. Scoped via includeGroup so
+// it is only queried for AF artifacts.
 rootProject.allprojects {
     repositories {
         maven {

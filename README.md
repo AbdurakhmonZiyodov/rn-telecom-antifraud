@@ -22,19 +22,26 @@ cd ios && pod install
 > This is a **native** package. After installing you must **rebuild** the app
 > (`pod install` + Xcode build / `gradlew`) — a Metro/JS reload is not enough.
 
-## Android setup (required — authenticated SDK registry)
+## Android setup (authenticated SDK registry)
 
-The Telecom AF SDK is hosted on an **authenticated** GitLab Maven registry. The package
-injects the repository for you, but you must supply two credentials in
-`android/gradle.properties` (or `~/.gradle/gradle.properties`):
+The Telecom AF SDK (`uz.tbm.antifraud`) is **not on Maven Central** — it lives on the
+operator's private GitLab package registry (`git.rtmc.uz`, project id `3`). Gradle needs a
+**Private-Token** to download it. The package injects the repository for you and reads the
+token from the **`gpr.key`** entry in `android/local.properties` — the same key existing BRB
+projects already use, so you usually add **nothing new**:
 
 ```properties
-TelecomAfGitlabProjectId=<numeric GitLab project id of the SDK repo>
-TelecomAfGitlabToken=<GitLab Private-Token with read_package_registry scope>
+# android/local.properties
+gpr.key=<GitLab Private-Token with read_package_registry scope>
 ```
 
-Get these from the operator (RTMC / antifrod@rtmc.uz). Without them the Android build fails
-to resolve `uz.tbm.antifraud:sdk`.
+- The GitLab project id defaults to `3`. Override only if it changes: `-PTelecomAfProjectId=<id>`
+  or `TelecomAfProjectId=<id>` in `gradle.properties`.
+- Get the token from the operator (RTMC / antifrod@rtmc.uz). Without it the Android build
+  fails to resolve `uz.tbm.antifraud:sdk`.
+
+> If your project already builds the inline Telecom AF module today, you already have
+> `gpr.key` in `local.properties` — nothing to do.
 
 ## iOS permissions
 

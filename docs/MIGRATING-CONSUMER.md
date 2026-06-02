@@ -19,7 +19,8 @@ Use this when an app currently has an **inline** native `TelecomAntiFraudModule`
 yarn add rn-telecom-antifraud@github:AbdurakhmonZiyodov/rn-telecom-antifraud#v1.0.0
 cd ios && pod install
 ```
-Add `TelecomAfGitlabProjectId` / `TelecomAfGitlabToken` to `android/gradle.properties`.
+The package reuses the `gpr.key` you already keep in `android/local.properties` for the AF
+SDK registry, so no new properties are needed (project id defaults to `3`).
 
 ## 3. Replace the JS usages
 
