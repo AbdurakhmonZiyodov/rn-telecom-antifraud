@@ -16,7 +16,7 @@ Use this when an app currently has an **inline** native `TelecomAntiFraudModule`
 ## 2. Install the package
 
 ```bash
-yarn add rn-telecom-antifraud@github:AbdurakhmonZiyodov/rn-telecom-antifraud#v1.0.0
+yarn add rn-telecom-antifraud@github:AbdurakhmonZiyodov/rn-telecom-antifraud#v1.0.1
 cd ios && pod install
 ```
 The package reuses the `gpr.key` you already keep in `android/local.properties` for the AF

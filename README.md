@@ -15,7 +15,7 @@ and SSL-pinning wiring built in — so consumer apps don't re-implement the nati
 ## Install
 
 ```bash
-yarn add rn-telecom-antifraud@github:AbdurakhmonZiyodov/rn-telecom-antifraud#v1.0.0
+yarn add rn-telecom-antifraud@github:AbdurakhmonZiyodov/rn-telecom-antifraud#v1.0.1
 cd ios && pod install
 ```
 

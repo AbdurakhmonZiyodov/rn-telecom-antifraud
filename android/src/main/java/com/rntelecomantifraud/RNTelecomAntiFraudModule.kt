@@ -16,10 +16,14 @@ class RNTelecomAntiFraudModule(
     override fun getName(): String = "RNTelecomAntiFraud"
 
     @ReactMethod
-    fun initialize(host: String, promise: Promise) {
+    fun initialize(host: String, pins: ReadableArray, promise: Promise) {
         try {
-            library = AntiFraudLibrary(host, reactApplicationContext)
-            library?.initialize { result ->
+            val lib = AntiFraudLibrary(host, reactApplicationContext)
+            library = lib
+            // Apply SSL pinning BEFORE initialize() so the SDK's network client is built with the
+            // pins active. Setting pins AFTER init does not re-configure the already-built client.
+            applySslPins(lib, pins)
+            lib.initialize { result ->
                 result.fold(
                     onSuccess = { promise.resolve("TelecomAntiFraud initialized successfully") },
                     onFailure = { error -> promise.reject("INIT_ERROR", error.message, error) }

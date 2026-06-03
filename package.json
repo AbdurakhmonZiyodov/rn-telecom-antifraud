@@ -1,6 +1,6 @@
 {
   "name": "rn-telecom-antifraud",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "React Native wrapper for the Telecom AntiFraud (TBM/RTMC) SDK — Promise-based, single configure step, init/recovery helpers built in.",
   "main": "lib/commonjs/index.js",
   "module": "lib/module/index.js",

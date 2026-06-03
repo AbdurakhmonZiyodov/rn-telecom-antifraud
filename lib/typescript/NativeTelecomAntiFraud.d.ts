@@ -1,6 +1,6 @@
 import type { TurboModule } from 'react-native';
 export interface Spec extends TurboModule {
-    initialize(host: string): Promise<string>;
+    initialize(host: string, pins: string[]): Promise<string>;
     isInitialized(): Promise<boolean>;
     setSslPinning(pins: string[]): Promise<string>;
     clearSslPinning(): Promise<string>;

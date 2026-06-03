@@ -11,13 +11,21 @@ class RNTelecomAntiFraud: NSObject {
     return false
   }
 
-  @objc(initialize:resolver:rejecter:)
+  @objc(initialize:pins:resolver:rejecter:)
   func initialize(_ host: String,
+                  pins: [String],
                   resolver: @escaping RCTPromiseResolveBlock,
                   rejecter: @escaping RCTPromiseRejectBlock) {
-    library = AntiFraudLibrary(host: host)
+    let lib = AntiFraudLibrary(host: host)
+    library = lib
 
-    library?.initialization { result in
+    // Apply SSL pinning BEFORE initialization() so the SDK's network client is built with the
+    // pins active. Setting pins AFTER init does not re-configure the already-built client.
+    if !pins.isEmpty {
+      lib.setSslPinning(pins: pins)
+    }
+
+    lib.initialization { result in
       switch result {
       case .success:
         resolver("TelecomAntiFraud initialized successfully")

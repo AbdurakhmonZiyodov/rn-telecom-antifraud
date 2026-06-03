@@ -3,8 +3,9 @@
 
 @interface RCT_EXTERN_MODULE(RNTelecomAntiFraud, NSObject)
 
-// Initialize the AntiFraud library with host
+// Initialize the AntiFraud library with host (pins = SHA-256 SSL pins, applied before init)
 RCT_EXTERN_METHOD(initialize:(NSString *)host
+                  pins:(NSArray *)pins
                   resolver:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject)
 
